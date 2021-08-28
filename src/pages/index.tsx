@@ -1,22 +1,20 @@
-import Head from "next/head";
-import React from "react";
-import Title from "~/components/title";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { useState } from "react";
+import dynamic from "next/dynamic";
+const PDFViewer = dynamic(() => import("~/components/pdfViewer"), {
+  ssr: false,
+});
 
 const Index: React.VFC = () => {
+  const posters = ["poster1", "poster2"];
+  const [posterIndex, setPosterIndex] = useState<number>(0);
   return (
-    <div>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main>
-        <div className="text-center px-20 py-10 bg-gray-300">
-          <Title>This is Nextjs Template!</Title>
-          <p className="text-blue-500">Next.js + TypeScript + TailwindCSS</p>
-        </div>
-      </main>
-    </div>
+    <>
+      <div className="flex">
+        <PDFViewer file={`posters/poster1.pdf`} />
+        <PDFViewer file={`posters/poster2.pdf`} />
+      </div>
+    </>
   );
 };
 
