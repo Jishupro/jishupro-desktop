@@ -11,10 +11,7 @@ const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:3001";
 const Index: React.VFC = () => {
   const [posters, setPosters] = useState<string[]>(null);
   const [posterIndex, setPosterIndex] = useState<number>(0);
-
-  useEffect(() => {
-    if (posters) fullScreen();
-  }, [posters]);
+  const [isSettingPage, setIsSettingPage] = useState<boolean>(true);
 
   const onPostersSelected = async (e: ChangeEvent<HTMLInputElement>) => {
     const pdfFiles = e.target.files;
@@ -23,13 +20,12 @@ const Index: React.VFC = () => {
       const pdfUrl = URL.createObjectURL(pdfFiles[i]);
       pdfUrls.push(pdfUrl);
     }
-    await setPosters(pdfUrls);
+    setPosters(pdfUrls);
   };
 
   const fullScreen = () => {
     const screenElm = document.getElementById("screen");
     const fullScreenElm = document.fullscreenElement;
-    console.log(fullScreenElm, posters);
     if (!fullScreenElm && posters) {
       console.log("full");
       screenElm.requestFullscreen();
@@ -55,29 +51,51 @@ const Index: React.VFC = () => {
 
   return (
     <>
-      {posters ? (
+      {!isSettingPage && posters ? (
+        // ポスター表示画面
         <>
-          <div className="flex space-x-3">
-            <button
-              className="px-3 py-1 bg-blue-500 text-white text-lg"
-              onClick={setPrevPoster}
-            >
-              前へ
-            </button>
-            <button
-              className="px-3 py-1 bg-blue-500 text-white text-lg"
-              onClick={setNextPoster}
-            >
-              次へ
-            </button>
-          </div>
           <div id="screen">
-            {/* <PDFViewer file={posters[posterIndex]} onLoadSuccess={fullScreen} /> */}
-            <iframe className="h-screen w-screen" src={posters[posterIndex]} />
+            <div className="flex justify-between">
+              <button
+                className="px-3 py-1 bg-blue-500 text-white text-lg"
+                onClick={setPrevPoster}
+              >
+                ＜
+              </button>
+              <button
+                className="px-3 py-1 bg-blue-500 text-white text-lg"
+                onClick={setNextPoster}
+              >
+                ＞
+              </button>
+            </div>
+            <PDFViewer file={posters[posterIndex]} onLoadSuccess={fullScreen} />
+            <button
+              className="px-5 py-2 text-xl text-white bg-blue-500"
+              onClick={() => setIsSettingPage(true)}
+            >
+              設定画面に戻る
+            </button>
           </div>
         </>
       ) : (
-        <input type="file" multiple onChange={onPostersSelected} />
+        // ポスター設定画面
+        <div className="bg-gray-100 border max-w-3xl mx-auto my-10 px-7 py-5 w-full">
+          <h2 className="text-2xl font-bold">ポスターを設定する</h2>
+          <div className="my-5">
+            <input type="file" multiple onChange={onPostersSelected} />
+            <p className="text-gray-500">※複数選択可能です。</p>
+          </div>
+          <button
+            className={`px-5 py-2 rounded text-xl text-white ${
+              !posters ? "bg-gray-500" : "bg-blue-500"
+            }`}
+            disabled={!posters}
+            onClick={() => setIsSettingPage(false)}
+          >
+            全画面で表示する
+          </button>
+        </div>
       )}
     </>
   );
