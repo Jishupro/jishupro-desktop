@@ -6,7 +6,7 @@ const PDFViewer = dynamic(() => import("~/components/pdfViewer"), {
   ssr: false,
 });
 
-const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:8000";
+const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:5000";
 
 const Index: React.VFC = () => {
   const [posters, setPosters] = useState<string[]>(null);
@@ -41,7 +41,7 @@ const Index: React.VFC = () => {
   };
 
   const changePage = (data) => {
-    console.log("moved");
+    console.log("moved", data);
     if (data.action == "prev") {
       setPrevPoster();
     } else if (data.action == "next") {
