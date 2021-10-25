@@ -6,7 +6,7 @@ const PDFViewer = dynamic(() => import("~/components/pdfViewer"), {
   ssr: false,
 });
 
-const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:3001";
+const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:8000";
 
 const Index: React.VFC = () => {
   const [posters, setPosters] = useState<string[]>(null);
@@ -40,10 +40,19 @@ const Index: React.VFC = () => {
     setPosterIndex((prev) => (prev + posters.length - 1) % posters.length);
   };
 
+  const changePage = (data) => {
+    console.log("moved");
+    if (data.action == "prev") {
+      setPrevPoster();
+    } else if (data.action == "next") {
+      setNextPoster();
+    }
+  };
+
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT);
     socket.on("connected", (data) => console.log("connected"));
-    socket.on("moved", (data) => console.log("moved"));
+    socket.on("moved", changePage);
     return () => {
       socket.disconnect();
     };
