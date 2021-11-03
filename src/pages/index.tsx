@@ -1,6 +1,8 @@
 import { useEffect, useState, ChangeEvent } from "react";
 import socketIOClient from "socket.io-client";
 import dynamic from "next/dynamic";
+import AwesomeSlider from "react-awesome-slider";
+import "react-awesome-slider/dist/styles.css";
 
 const PDFViewer = dynamic(() => import("~/components/pdfViewer"), {
   ssr: false,
@@ -64,21 +66,17 @@ const Index: React.VFC = () => {
         // ポスター表示画面
         <>
           <div id="screen">
-            <div className="flex justify-between">
-              <button
-                className="px-3 py-1 bg-blue-500 text-white text-lg"
-                onClick={setPrevPoster}
-              >
-                ＜
-              </button>
-              <button
-                className="px-3 py-1 bg-blue-500 text-white text-lg"
-                onClick={setNextPoster}
-              >
-                ＞
-              </button>
-            </div>
-            <PDFViewer file={posters[posterIndex]} onLoadSuccess={fullScreen} />
+            <AwesomeSlider selected={posterIndex}>
+              {posters.map((poster, index) => (
+                <div>
+                  {index == 0 ? (
+                    <PDFViewer file={poster} onLoadSuccess={fullScreen} />
+                  ) : (
+                    <PDFViewer file={poster} />
+                  )}
+                </div>
+              ))}
+            </AwesomeSlider>
             <button
               className="px-5 py-2 text-xl text-white bg-blue-500"
               onClick={() => setIsSettingPage(true)}
