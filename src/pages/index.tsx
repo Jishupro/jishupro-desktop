@@ -66,7 +66,7 @@ const Index: React.VFC = () => {
         // ポスター表示画面
         <>
           <div id="screen">
-            <AwesomeSlider animation="cubeAnimation" selected={posterIndex}>
+            <AwesomeSlider selected={posterIndex}>
               {posters.map((poster, index) => (
                 <div>
                   {index == 0 ? (
