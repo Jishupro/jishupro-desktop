@@ -29,7 +29,6 @@ const Index: React.VFC = () => {
     const screenElm = document.getElementById("screen");
     const fullScreenElm = document.fullscreenElement;
     if (!fullScreenElm && posters) {
-      console.log("full");
       screenElm.requestFullscreen();
     }
   };
@@ -53,9 +52,10 @@ const Index: React.VFC = () => {
 
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT);
-    socket.on("connected", (data) => console.log("connected"));
+    socket.on("connected", () => console.log("connected"));
     socket.on("moved", changePage);
     return () => {
+      socket.off();
       socket.disconnect();
     };
   }, []);
@@ -65,12 +65,12 @@ const Index: React.VFC = () => {
       {!isSettingPage && posters ? (
         // ポスター表示画面
         <>
-          <div id="screen">
-            <AwesomeSlider selected={posterIndex}>
+          <div id="screen" className="h-full">
+            <AwesomeSlider selected={posterIndex} className="h-[90%]">
               {posters.map((poster, index) => (
-                <div>
+                <div key={poster}>
                   {index == 0 ? (
-                    <PDFViewer file={poster} onLoadSuccess={fullScreen} />
+                    <PDFViewer file={poster} />
                   ) : (
                     <PDFViewer file={poster} />
                   )}
@@ -82,6 +82,18 @@ const Index: React.VFC = () => {
               onClick={() => setIsSettingPage(true)}
             >
               設定画面に戻る
+            </button>
+            <button
+              className="px-5 py-2 text-xl text-white bg-blue-500"
+              onClick={setPrevPoster}
+            >
+              戻る
+            </button>
+            <button
+              className="px-5 py-2 text-xl text-white bg-blue-500"
+              onClick={setNextPoster}
+            >
+              進む
             </button>
           </div>
         </>
