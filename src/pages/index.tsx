@@ -11,10 +11,11 @@ const PDFViewer = dynamic(() => import("~/components/pdfViewer"), {
 const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:5000";
 
 const Index: React.VFC = () => {
-  const [posters, setPosters] = useState<string[]>(null);
-  const [posterIndex, setPosterIndex] = useState<number>(0);
-  const [isSettingPage, setIsSettingPage] = useState<boolean>(true);
+  const [posters, setPosters] = useState<string[]>(null); // 選択したポスター
+  const [posterIndex, setPosterIndex] = useState<number>(0); // 表示中のポスターのindex
+  const [isSettingPage, setIsSettingPage] = useState<boolean>(true); // 設定画面か
 
+  // ポスター設定処理
   const onPostersSelected = async (e: ChangeEvent<HTMLInputElement>) => {
     const pdfFiles = e.target.files;
     const pdfUrls = [];
@@ -25,6 +26,7 @@ const Index: React.VFC = () => {
     setPosters(pdfUrls);
   };
 
+  // フルスクリーン化
   const fullScreen = () => {
     const screenElm = document.getElementById("screen");
     const fullScreenElm = document.fullscreenElement;
@@ -33,27 +35,33 @@ const Index: React.VFC = () => {
     }
   };
 
+  // 次のポスターを表示
   const setNextPoster = () => {
     setPosterIndex((prev) => (prev + 1) % posters.length);
   };
 
+  // 前のポスターを表示
   const setPrevPoster = () => {
     setPosterIndex((prev) => (prev + posters.length - 1) % posters.length);
   };
 
+  // ポスター切り替え
   const changePage = (data) => {
     console.log("moved", data);
     if (data.action == "prev") {
+      // 前のポスターへ
       setPrevPoster();
     } else if (data.action == "next") {
+      // 次のポスターへ
       setNextPoster();
     }
   };
 
+  // マウント時にsocket接続
   useEffect(() => {
     const socket = socketIOClient(ENDPOINT);
     socket.on("connected", () => console.log("connected"));
-    socket.on("moved", changePage);
+    socket.on("moved", changePage); // movedイベント発火時の処理
     return () => {
       socket.off();
       socket.disconnect();
@@ -70,7 +78,7 @@ const Index: React.VFC = () => {
               {posters.map((poster, index) => (
                 <div key={poster}>
                   {index == 0 ? (
-                    <PDFViewer file={poster} />
+                    <PDFViewer file={poster} onLoadSuccess={fullScreen} />
                   ) : (
                     <PDFViewer file={poster} />
                   )}
