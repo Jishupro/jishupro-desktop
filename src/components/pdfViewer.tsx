@@ -5,7 +5,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
 
 type Props = {
   file: string;
-  onLoadSuccess?: () => void;
   pageNumber?: number;
 };
 
@@ -14,11 +13,7 @@ type Props = {
  * @param page 内容
  */
 
-const PDFViewer: React.VFC<Props> = ({
-  pageNumber = 1,
-  file,
-  onLoadSuccess,
-}) => {
+const PDFViewer: React.VFC<Props> = ({ pageNumber = 1, file }) => {
   return (
     <Document file={file}>
       <Page
@@ -26,7 +21,6 @@ const PDFViewer: React.VFC<Props> = ({
         // height={window.screen.availHeight}
         width={window.screen.availWidth} // 縦長ディスプレイのため幅固定
         className="flex justify-center"
-        onLoadSuccess={onLoadSuccess}
       />
     </Document>
   );

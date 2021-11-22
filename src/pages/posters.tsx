@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
 import socketIOClient from "socket.io-client";
-import dynamic from "next/dynamic";
 import AwesomeSlider from "react-awesome-slider";
 import "react-awesome-slider/dist/styles.css";
 import { useRouter } from "next/dist/client/router";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { fullScreenState, postersState } from "~/recoil/atoms";
 
-const PDFViewer = dynamic(() => import("~/components/pdfViewer"), {
-  ssr: false,
-});
+import PDFViewer from "~/components/pdfViewer";
 
 const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:8000";
 
