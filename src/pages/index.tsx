@@ -1,19 +1,14 @@
-import { useEffect, useState, ChangeEvent } from "react";
-import socketIOClient from "socket.io-client";
-import dynamic from "next/dynamic";
-import AwesomeSlider from "react-awesome-slider";
+import { useRouter } from "next/dist/client/router";
+import { ChangeEvent } from "react";
 import "react-awesome-slider/dist/styles.css";
+import { useRecoilState } from "recoil";
+import { postersState } from "~/recoil/atoms";
 
-const PDFViewer = dynamic(() => import("~/components/pdfViewer"), {
-  ssr: false,
-});
-
-const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:5000";
+const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:8000";
 
 const Index: React.VFC = () => {
-  const [posters, setPosters] = useState<string[]>(null); // 選択したポスター
-  const [posterIndex, setPosterIndex] = useState<number>(0); // 表示中のポスターのindex
-  const [isSettingPage, setIsSettingPage] = useState<boolean>(true); // 設定画面か
+  const [posters, setPosters] = useRecoilState<string[]>(postersState); // 選択したポスター
+  const router = useRouter();
 
   // ポスター設定処理
   const onPostersSelected = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -26,104 +21,24 @@ const Index: React.VFC = () => {
     setPosters(pdfUrls);
   };
 
-  // フルスクリーン化
-  const fullScreen = () => {
-    const screenElm = document.getElementById("screen");
-    const fullScreenElm = document.fullscreenElement;
-    if (!fullScreenElm && posters) {
-      screenElm.requestFullscreen();
-    }
-  };
-
-  // 次のポスターを表示
-  const setNextPoster = () => {
-    setPosterIndex((prev) => (prev + 1) % posters.length);
-  };
-
-  // 前のポスターを表示
-  const setPrevPoster = () => {
-    setPosterIndex((prev) => (prev + posters.length - 1) % posters.length);
-  };
-
-  // ポスター切り替え
-  const changePage = (data) => {
-    console.log("moved", data);
-    if (data.action == "prev") {
-      // 前のポスターへ
-      setPrevPoster();
-    } else if (data.action == "next") {
-      // 次のポスターへ
-      setNextPoster();
-    }
-  };
-
-  // マウント時にsocket接続
-  useEffect(() => {
-    const socket = socketIOClient(ENDPOINT);
-    socket.on("connected", () => console.log("connected"));
-    socket.on("moved", changePage); // movedイベント発火時の処理
-    return () => {
-      socket.off();
-      socket.disconnect();
-    };
-  }, []);
-
   return (
     <>
-      {!isSettingPage && posters ? (
-        // ポスター表示画面
-        <>
-          <div id="screen" className="h-full">
-            <AwesomeSlider selected={posterIndex} className="h-[90%]">
-              {posters.map((poster, index) => (
-                <div key={poster}>
-                  {index == 0 ? (
-                    <PDFViewer file={poster} onLoadSuccess={fullScreen} />
-                  ) : (
-                    <PDFViewer file={poster} />
-                  )}
-                </div>
-              ))}
-            </AwesomeSlider>
-            <button
-              className="px-5 py-2 text-xl text-white bg-blue-500"
-              onClick={() => setIsSettingPage(true)}
-            >
-              設定画面に戻る
-            </button>
-            <button
-              className="px-5 py-2 text-xl text-white bg-blue-500"
-              onClick={setPrevPoster}
-            >
-              戻る
-            </button>
-            <button
-              className="px-5 py-2 text-xl text-white bg-blue-500"
-              onClick={setNextPoster}
-            >
-              進む
-            </button>
-          </div>
-        </>
-      ) : (
-        // ポスター設定画面
-        <div className="bg-gray-100 border max-w-3xl mx-auto my-10 px-7 py-5 w-full">
-          <h2 className="text-2xl font-bold">ポスターを設定する</h2>
-          <div className="my-5">
-            <input type="file" multiple onChange={onPostersSelected} />
-            <p className="text-gray-500">※複数選択可能です。</p>
-          </div>
-          <button
-            className={`px-5 py-2 rounded text-xl text-white ${
-              !posters ? "bg-gray-500" : "bg-blue-500"
-            }`}
-            disabled={!posters}
-            onClick={() => setIsSettingPage(false)}
-          >
-            全画面で表示する
-          </button>
+      <div className="bg-gray-100 border max-w-3xl mx-auto my-10 px-7 py-5 w-full">
+        <h2 className="text-2xl font-bold">ポスターを設定する</h2>
+        <div className="my-5">
+          <input type="file" multiple onChange={onPostersSelected} />
+          <p className="text-gray-500">※複数選択可能です。</p>
         </div>
-      )}
+        <button
+          className={`px-5 py-2 rounded text-xl text-white ${
+            !posters ? "bg-gray-500" : "bg-blue-500"
+          }`}
+          disabled={!posters}
+          onClick={() => router.push("/posters")}
+        >
+          全画面で表示する
+        </button>
+      </div>
     </>
   );
 };
