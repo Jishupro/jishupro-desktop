@@ -74,8 +74,8 @@ const Index: React.VFC = () => {
       <div id="screen" className="h-full">
         <AwesomeSlider selected={posterIndex} className="h-[90%]">
           {posters.map((poster, index) => (
-            <div key={poster}>
-              <PDFViewer file={poster} />
+            <div key={poster} className="w-full h-full">
+              <iframe src={poster} className="w-full h-full" />
             </div>
           ))}
         </AwesomeSlider>
