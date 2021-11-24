@@ -6,8 +6,6 @@ import { useRouter } from "next/dist/client/router";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { fullScreenState, postersState } from "~/recoil/atoms";
 
-import PDFViewer from "~/components/pdfViewer";
-
 const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:8000";
 
 const Index: React.VFC = () => {
