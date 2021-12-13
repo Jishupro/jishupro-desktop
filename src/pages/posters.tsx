@@ -6,7 +6,7 @@ import { useRouter } from "next/dist/client/router";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { fullScreenState, postersState } from "~/recoil/atoms";
 
-const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:8000";
+const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:5000";
 
 const Index: React.VFC = () => {
   const router = useRouter();
