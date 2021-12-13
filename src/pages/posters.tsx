@@ -73,7 +73,7 @@ const Index: React.VFC = () => {
         <AwesomeSlider selected={posterIndex} className="h-[90%]">
           {posters.map((poster, index) => (
             <div key={poster} className="w-full h-full">
-              <iframe src={poster} className="w-full h-full" />
+              <iframe src={`${poster}#view=FitH`} className="w-full h-full" />
             </div>
           ))}
         </AwesomeSlider>
