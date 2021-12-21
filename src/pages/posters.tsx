@@ -6,9 +6,7 @@ import { useRouter } from "next/dist/client/router";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { fullScreenState, postersState } from "~/recoil/atoms";
 
-import PDFViewer from "~/components/pdfViewer";
-
-const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:8000";
+const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:5000";
 
 const Index: React.VFC = () => {
   const router = useRouter();
@@ -74,8 +72,8 @@ const Index: React.VFC = () => {
       <div id="screen" className="h-full">
         <AwesomeSlider selected={posterIndex} className="h-[90%]">
           {posters.map((poster, index) => (
-            <div key={poster}>
-              <PDFViewer file={poster} />
+            <div key={poster} className="w-full h-full">
+              <iframe src={`${poster}#view=FitH`} className="w-full h-full" />
             </div>
           ))}
         </AwesomeSlider>

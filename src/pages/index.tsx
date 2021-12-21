@@ -4,8 +4,6 @@ import "react-awesome-slider/dist/styles.css";
 import { useRecoilState } from "recoil";
 import { postersState } from "~/recoil/atoms";
 
-const ENDPOINT = process.env.NEXT_PUBLIC_ENDPOINT || "http://localhost:8000";
-
 const Index: React.VFC = () => {
   const [posters, setPosters] = useRecoilState<string[]>(postersState); // 選択したポスター
   const router = useRouter();
@@ -31,9 +29,9 @@ const Index: React.VFC = () => {
         </div>
         <button
           className={`px-5 py-2 rounded text-xl text-white ${
-            !posters ? "bg-gray-500" : "bg-blue-500"
+            posters.length == 0 ? "bg-gray-500" : "bg-blue-500"
           }`}
-          disabled={!posters}
+          disabled={posters.length == 0}
           onClick={() => router.push("/posters")}
         >
           全画面で表示する
